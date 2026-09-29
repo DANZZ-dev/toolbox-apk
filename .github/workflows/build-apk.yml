@@ -1,17 +1,14 @@
-name: Build Android APK (TWA webview)
+name: Build Android APK
 
-# Jalankan manual dari tab Actions setelah situs sudah live di GitHub Pages
-# (workflow deploy-pages.yml jalan duluan). Ganti PWA_URL di bawah dengan
-# URL Pages kamu, misalnya https://username.github.io/nama-repo/
+# Jalankan manual: tab Actions -> Build Android APK -> Run workflow
+# Web app dibungkus Capacitor dan dibuild jadi APK debug (bisa langsung diinstal).
+# Tidak butuh GitHub Pages, keystore, atau input interaktif.
 on:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      PWA_URL: "https://github.com/DANZZ-dev/toolbox-apk"
-      PACKAGE_ID: "com.example.devtoolbox"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,30 +18,30 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Install Bubblewrap CLI
-        run: npm install -g @bubblewrap/cli
-
-      - name: Init TWA project
+      - name: Siapkan proyek Capacitor
         run: |
-          bubblewrap init --manifest="${PWA_URL}manifest.json" \
-            --directory=twa-project \
-            --packageId="${PACKAGE_ID}" \
-            --name="Dev Toolbox" \
-            --skipPwaValidation \
-            --yes || true
+          mkdir -p www
+          cp -r index.html manifest.json css js icons www/
+          npm init -y
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap init "Dev Toolbox" com.example.devtoolbox --web-dir=www
+          npx cap add android
+          npx cap sync android
 
-      - name: Build APK
-        working-directory: twa-project
-        run: bubblewrap build --skipPwaValidation
+      - name: Build APK debug
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: dev-toolbox-apk
-          path: twa-project/app-release-signed.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
