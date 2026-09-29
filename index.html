@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>toolbox — dev utilities</title>
+<meta name="theme-color" content="#0B0D10">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Activity bar -->
+  <nav class="railbar" aria-label="Navigasi tool">
+    <div class="rail-brand">›_</div>
+    <button class="rail-item is-active" data-target="qr"     title="QR Generator">QR</button>
+    <button class="rail-item"           data-target="text"   title="Text &amp; Encode">TX</button>
+    <button class="rail-item"           data-target="color"  title="Color">CL</button>
+    <button class="rail-item"           data-target="pass"   title="Password">PW</button>
+    <button class="rail-item"           data-target="json"   title="JSON Formatter">JS</button>
+    <button class="rail-item"           data-target="music"  title="Music Player">MU</button>
+    <button class="rail-item"           data-target="clock"  title="Clock &amp; Timer">CK</button>
+  </nav>
+
+  <!-- Main content -->
+  <main class="stage">
+
+    <header class="stage-topbar">
+      <span class="path">~/toolbox/<span id="pathTail">qr-generator</span></span>
+      <span class="dot-status">● ready</span>
+    </header>
+
+    <!-- QR GENERATOR -->
+    <section class="panel is-active" id="panel-qr" data-panel="qr">
+      <h1>QR Generator</h1>
+      <p class="lead">Buat kode QR dari berbagai jenis data.</p>
+
+      <div class="tabs" id="qrTabs">
+        <button class="tab is-active" data-mode="text">Teks / URL</button>
+        <button class="tab" data-mode="wifi">WiFi</button>
+        <button class="tab" data-mode="vcard">Kontak</button>
+        <button class="tab" data-mode="email">Email</button>
+      </div>
+
+      <div class="qr-body">
+        <div class="qr-form">
+
+          <div class="qr-fields" data-fields="text">
+            <label>Teks atau URL
+              <textarea id="qrTextInput" rows="4" placeholder="https://contoh.com atau teks bebas"></textarea>
+            </label>
+          </div>
+
+          <div class="qr-fields is-hidden" data-fields="wifi">
+            <label>Nama jaringan (SSID)
+              <input type="text" id="wifiSsid" placeholder="Nama_WiFi">
+            </label>
+            <label>Kata sandi
+              <input type="text" id="wifiPass" placeholder="Kosongkan jika terbuka">
+            </label>
+            <label>Enkripsi
+              <select id="wifiEnc">
+                <option value="WPA">WPA/WPA2</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Tanpa kata sandi</option>
+              </select>
+            </label>
+            <label class="checkline"><input type="checkbox" id="wifiHidden"> Jaringan tersembunyi</label>
+            <p class="hint">QR ini dipakai untuk menyambungkan perangkat ke WiFi milik Anda sendiri saat dipindai kamera — bukan untuk memutus koneksi siapa pun.</p>
+          </div>
+
+          <div class="qr-fields is-hidden" data-fields="vcard">
+            <label>Nama lengkap
+              <input type="text" id="vName" placeholder="Nama">
+            </label>
+            <label>Telepon
+              <input type="text" id="vPhone" placeholder="08xxxxxxxxxx">
+            </label>
+            <label>Email
+              <input type="email" id="vEmail" placeholder="nama@email.com">
+            </label>
+            <label>Organisasi
+              <input type="text" id="vOrg" placeholder="Perusahaan / peran">
+            </label>
+          </div>
+
+          <div class="qr-fields is-hidden" data-fields="email">
+            <label>Alamat email
+              <input type="email" id="eTo" placeholder="tujuan@email.com">
+            </label>
+            <label>Subjek
+              <input type="text" id="eSubject" placeholder="Subjek">
+            </label>
+            <label>Isi pesan
+              <textarea id="eBody" rows="3" placeholder="Isi email"></textarea>
+            </label>
+          </div>
+
+          <div class="qr-fields-common">
+            <label>Ukuran
+              <input type="range" id="qrSize" min="128" max="512" step="32" value="256">
+              <span id="qrSizeVal">256px</span>
+            </label>
+            <button class="btn-primary" id="qrGenerateBtn">Generate QR</button>
+          </div>
+        </div>
+
+        <div class="qr-preview">
+          <div id="qrCanvasHolder" class="qr-canvas-holder">
+            <span class="qr-placeholder">Pratinjau QR akan muncul di sini</span>
+          </div>
+          <button class="btn-ghost is-hidden" id="qrDownloadBtn">Unduh PNG</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEXT / ENCODE TOOLS -->
+    <section class="panel" id="panel-text" data-panel="text">
+      <h1>Text &amp; Encode</h1>
+      <p class="lead">Base64, konversi huruf, dan lorem ipsum.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h2>Base64</h2>
+          <textarea id="b64Input" rows="5" placeholder="Masukkan teks..."></textarea>
+          <div class="btn-row">
+            <button class="btn-primary" id="b64EncodeBtn">Encode</button>
+            <button class="btn-secondary" id="b64DecodeBtn">Decode</button>
+          </div>
+          <textarea id="b64Output" rows="5" placeholder="Hasil..." readonly></textarea>
+        </div>
+
+        <div class="card">
+          <h2>Ubah huruf</h2>
+          <textarea id="caseInput" rows="4" placeholder="Masukkan teks..."></textarea>
+          <div class="btn-row wrap">
+            <button class="btn-secondary" data-case="upper">UPPERCASE</button>
+            <button class="btn-secondary" data-case="lower">lowercase</button>
+            <button class="btn-secondary" data-case="title">Title Case</button>
+            <button class="btn-secondary" data-case="sentence">Sentence case</button>
+          </div>
+          <textarea id="caseOutput" rows="4" placeholder="Hasil..." readonly></textarea>
+        </div>
+
+        <div class="card">
+          <h2>Lorem Ipsum</h2>
+          <label>Jumlah paragraf
+            <input type="number" id="loremCount" min="1" max="10" value="3">
+          </label>
+          <button class="btn-primary" id="loremBtn">Buat teks</button>
+          <textarea id="loremOutput" rows="6" readonly></textarea>
+        </div>
+
+        <div class="card">
+          <h2>Timestamp</h2>
+          <label>Unix timestamp (detik)
+            <input type="number" id="tsInput" placeholder="1727600000">
+          </label>
+          <button class="btn-secondary" id="tsToDateBtn">→ Tanggal</button>
+          <button class="btn-secondary" id="tsNowBtn">Isi waktu sekarang</button>
+          <div class="result-line" id="tsResult">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLOR -->
+    <section class="panel" id="panel-color" data-panel="color">
+      <h1>Color Tool</h1>
+      <p class="lead">Pilih warna, lihat semua format sekaligus.</p>
+
+      <div class="color-body">
+        <input type="color" id="colorPicker" value="#6C8CFF">
+        <div class="color-preview" id="colorPreview"></div>
+        <div class="color-values">
+          <label>HEX <input type="text" id="colorHex" readonly></label>
+          <label>RGB <input type="text" id="colorRgb" readonly></label>
+          <label>HSL <input type="text" id="colorHsl" readonly></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSWORD -->
+    <section class="panel" id="panel-pass" data-panel="pass">
+      <h1>Password Generator</h1>
+      <p class="lead">Buat kata sandi acak yang kuat.</p>
+
+      <div class="card pass-card">
+        <label>Panjang: <span id="passLenVal">16</span>
+          <input type="range" id="passLen" min="6" max="64" value="16">
+        </label>
+        <div class="checkgrid">
+          <label class="checkline"><input type="checkbox" id="passUpper" checked> Huruf besar (A-Z)</label>
+          <label class="checkline"><input type="checkbox" id="passLower" checked> Huruf kecil (a-z)</label>
+          <label class="checkline"><input type="checkbox" id="passNum" checked> Angka (0-9)</label>
+          <label class="checkline"><input type="checkbox" id="passSym"> Simbol (!@#$...)</label>
+        </div>
+        <button class="btn-primary" id="passGenBtn">Generate</button>
+        <input type="text" id="passOutput" readonly placeholder="Password akan muncul di sini">
+        <button class="btn-ghost" id="passCopyBtn">Salin</button>
+      </div>
+    </section>
+
+    <!-- JSON -->
+    <section class="panel" id="panel-json" data-panel="json">
+      <h1>JSON Formatter</h1>
+      <p class="lead">Rapikan dan validasi JSON.</p>
+
+      <div class="grid-2">
+        <textarea id="jsonInput" rows="16" placeholder='{"contoh": true}'></textarea>
+        <textarea id="jsonOutput" rows="16" placeholder="Hasil format..." readonly></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="jsonFormatBtn">Format</button>
+        <button class="btn-secondary" id="jsonMinifyBtn">Minify</button>
+      </div>
+      <div class="result-line" id="jsonStatus">—</div>
+    </section>
+
+    <!-- MUSIC PLAYER (YouTube) -->
+    <section class="panel" id="panel-music" data-panel="music">
+      <h1>Music Player</h1>
+      <p class="lead">Cari judul lagu atau tempel link YouTube.</p>
+
+      <div class="player">
+        <div class="yt-search">
+          <input type="text" id="ytQuery" placeholder="Judul lagu atau link YouTube…" autocomplete="off" enterkeyhint="search">
+          <button class="btn-primary" id="ytGoBtn">Putar</button>
+        </div>
+        <div class="result-line" id="ytStatus">—</div>
+
+        <div class="yt-frame"><div id="ytPlayer"></div></div>
+
+        <div class="now-playing">
+          <div class="track-title" id="trackTitle">Belum ada lagu dipilih</div>
+          <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+          <div class="time-row">
+            <span id="curTime">0:00</span>
+            <span id="durTime">0:00</span>
+          </div>
+          <div class="controls">
+            <button id="prevBtn" title="Sebelumnya">⏮</button>
+            <button id="playBtn" title="Play/Pause">▶</button>
+            <button id="nextBtn" title="Berikutnya">⏭</button>
+            <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" title="Volume">
+          </div>
+        </div>
+        <ol class="playlist" id="playlist"></ol>
+
+        <details class="yt-settings">
+          <summary>Pengaturan pencarian (opsional)</summary>
+          <p class="hint">Tanpa API key, pencarian memakai server Piped/Invidious publik yang kadang down. Dengan YouTube Data API key hasilnya lebih stabil. Key hanya disimpan di perangkat ini; sebaiknya batasi key di Google Cloud (HTTP referrer + hanya YouTube Data API v3).</p>
+          <input type="password" id="ytApiKey" placeholder="YouTube Data API key" autocomplete="off">
+          <div class="btn-row">
+            <button class="btn-secondary" id="ytKeySaveBtn">Simpan key</button>
+            <button class="btn-ghost" id="ytKeyClearBtn">Hapus key</button>
+          </div>
+          <div class="result-line" id="ytKeyState">—</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- CLOCK -->
+    <section class="panel" id="panel-clock" data-panel="clock">
+      <h1>Clock &amp; Timer</h1>
+      <p class="lead">Jam digital, stopwatch, dan countdown.</p>
+
+      <div class="grid-2">
+        <div class="card clock-card">
+          <div class="big-clock" id="bigClock">00:00:00</div>
+          <div class="big-date" id="bigDate">—</div>
+        </div>
+
+        <div class="card">
+          <h2>Stopwatch</h2>
+          <div class="big-clock small" id="stopwatchDisplay">00:00.0</div>
+          <div class="btn-row">
+            <button class="btn-primary" id="swStartBtn">Mulai</button>
+            <button class="btn-secondary" id="swLapBtn">Lap</button>
+            <button class="btn-ghost" id="swResetBtn">Reset</button>
+          </div>
+          <ol class="lap-list" id="lapList"></ol>
+        </div>
+
+        <div class="card">
+          <h2>Countdown</h2>
+          <div class="btn-row">
+            <input type="number" id="cdMinutes" min="0" placeholder="menit" value="5">
+            <button class="btn-primary" id="cdStartBtn">Mulai</button>
+            <button class="btn-ghost" id="cdResetBtn">Reset</button>
+          </div>
+          <div class="big-clock small" id="cdDisplay">05:00</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
