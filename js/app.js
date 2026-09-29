@@ -474,13 +474,44 @@ railItems.forEach(btn => {
     return playerPromise;
   }
 
+  /* ---------- mode latar belakang native (APK Capacitor) ---------- */
+  const BG = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())
+    ? (window.Capacitor.Plugins && window.Capacitor.Plugins.BackgroundMode) : null;
+  let bgOn = false;
+  async function bgEnable(){
+    if(!BG || bgOn) return;
+    try{
+      try{ await BG.requestNotificationsPermission(); }catch(e){}
+      await BG.setSettings({
+        title: 'Dev Toolbox',
+        text: 'Musik sedang diputar',
+        icon: 'icon',
+        resume: true,
+        silent: false,
+        hidden: false,
+        disableWebViewOptimization: true
+      });
+      await BG.enable();
+      try{ await BG.disableWebViewOptimizations(); }catch(e){}
+      bgOn = true;
+    }catch(e){ console.warn('BackgroundMode gagal:', e); }
+  }
+  async function bgDisable(){
+    if(!BG || !bgOn) return;
+    try{ await BG.disable(); }catch(e){}
+    bgOn = false;
+  }
+  if(BG){
+    try{ BG.addListener('appInBackground', () => { if(!userPaused && hasPlayed) resumeSoon(); }); }catch(e){}
+  }
+
   /* ---------- state player ---------- */
   function onState(e){
     const S = YT.PlayerState;
     if(e.data === S.PLAYING){
       errStreak = 0; hasPlayed = true;
       playBtn.textContent = '⏸';
-      startTick(); startKeepAlive(); syncMeta();
+      startTick(); startKeepAlive(); syncMeta(); bgEnable();
       setStatus('Memutar');
       setSessionState('playing');
     }else if(e.data === S.PAUSED){
@@ -489,6 +520,7 @@ railItems.forEach(btn => {
       setSessionState('paused');
       // Browser kadang menjeda saat halaman di latar belakang: coba lanjutkan
       if(document.hidden && !userPaused && hasPlayed) resumeSoon();
+      else if(userPaused) bgDisable();
     }else if(e.data === S.ENDED){
       playBtn.textContent = '▶';
       if(!listMode) next();
