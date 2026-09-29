@@ -479,6 +479,7 @@ railItems.forEach(btn => {
     ? (window.Capacitor.Plugins && window.Capacitor.Plugins.BackgroundMode) : null;
   let bgOn = false;
   async function bgEnable(){
+    nativeKeep(true);
     if(!BG || bgOn) return;
     try{
       try{ await BG.requestNotificationsPermission(); }catch(e){}
@@ -496,7 +497,18 @@ railItems.forEach(btn => {
       bgOn = true;
     }catch(e){ console.warn('BackgroundMode gagal:', e); }
   }
+  function nativeKeep(on){
+    try{ if(window.DTBNative) window.DTBNative.keepAlive(!!on); }catch(e){}
+  }
+  // Watchdog: kalau YouTube menjeda sendiri saat di latar belakang, lanjutkan
+  setInterval(() => {
+    if(!BG || userPaused || !hasPlayed) return;
+    withPlayer(p => {
+      try{ if(p.getPlayerState() === YT.PlayerState.PAUSED) p.playVideo(); }catch(e){}
+    });
+  }, 2000);
   async function bgDisable(){
+    nativeKeep(false);
     if(!BG || !bgOn) return;
     try{ await BG.disable(); }catch(e){}
     bgOn = false;
@@ -535,7 +547,7 @@ railItems.forEach(btn => {
   }
 
   document.addEventListener('visibilitychange', () => {
-    if(document.hidden && !userPaused && hasPlayed) resumeSoon();
+    if(!userPaused && hasPlayed) resumeSoon();
   });
 
   function onError(e){
