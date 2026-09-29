@@ -1,0 +1,50 @@
+name: Build Android APK (TWA webview)
+
+# Jalankan manual dari tab Actions setelah situs sudah live di GitHub Pages
+# (workflow deploy-pages.yml jalan duluan). Ganti PWA_URL di bawah dengan
+# URL Pages kamu, misalnya https://username.github.io/nama-repo/
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PWA_URL: "https://<username>.github.io/<nama-repo>/"
+      PACKAGE_ID: "com.example.devtoolbox"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Init TWA project
+        run: |
+          bubblewrap init --manifest="${PWA_URL}manifest.json" \
+            --directory=twa-project \
+            --packageId="${PACKAGE_ID}" \
+            --name="Dev Toolbox" \
+            --skipPwaValidation \
+            --yes || true
+
+      - name: Build APK
+        working-directory: twa-project
+        run: bubblewrap build --skipPwaValidation
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-toolbox-apk
+          path: twa-project/app-release-signed.apk
