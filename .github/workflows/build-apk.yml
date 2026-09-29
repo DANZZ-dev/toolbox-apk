@@ -1,8 +1,8 @@
 name: Build Android APK
 
 # Jalankan manual: tab Actions -> Build Android APK -> Run workflow
-# Web app dibungkus Capacitor dan dibuild jadi APK debug (bisa langsung diinstal).
-# Tidak butuh GitHub Pages, keystore, atau input interaktif.
+# Web app dibungkus Capacitor 7 + plugin background mode (foreground service)
+# supaya musik tetap jalan saat aplikasi di-minimize / layar mati.
 on:
   workflow_dispatch:
 
@@ -18,21 +18,104 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup Java 17
+      # Capacitor 7 mewajibkan JDK 21
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Siapkan proyek Capacitor
         run: |
           mkdir -p www
           cp -r index.html manifest.json css js icons www/
           npm init -y
-          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+          npm install @anuradev/capacitor-background-mode@7.2.1
           npx cap init "Dev Toolbox" com.example.devtoolbox --web-dir=www
           npx cap add android
           npx cap sync android
+
+      - name: Izin & ikon notifikasi (foreground service)
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          sed -i '/android.permission.INTERNET/a \    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST"
+          mkdir -p android/app/src/main/res/drawable
+          cat > android/app/src/main/res/drawable/icon.xml << 'XML'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="24dp" android:height="24dp"
+              android:viewportWidth="24" android:viewportHeight="24">
+              <path android:fillColor="#FFFFFF"
+                  android:pathData="M12,3v10.55c-0.59,-0.34 -1.27,-0.55 -2,-0.55 -2.21,0 -4,1.79 -4,4s1.79,4 4,4 4,-1.79 4,-4V7h4V3h-6z"/>
+          </vector>
+          XML
+          grep -n "permission" "$MANIFEST"
+
+      - name: MainActivity - jaga WebView tetap hidup di latar belakang
+        run: |
+          cat > android/app/src/main/java/com/example/devtoolbox/MainActivity.java << 'JAVA'
+          package com.example.devtoolbox;
+
+          import android.os.Bundle;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.view.View;
+          import android.webkit.JavascriptInterface;
+          import android.webkit.WebView;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              private final Handler handler = new Handler(Looper.getMainLooper());
+              private volatile boolean wantKeepAlive = false;
+              private boolean inBackground = false;
+
+              private final Runnable ticker = new Runnable() {
+                  @Override
+                  public void run() {
+                      if (!inBackground) return;
+                      if (wantKeepAlive && getBridge() != null) {
+                          WebView wv = getBridge().getWebView();
+                          if (wv != null) {
+                              wv.onResume();
+                              wv.resumeTimers();
+                              wv.dispatchWindowVisibilityChanged(View.VISIBLE);
+                          }
+                      }
+                      handler.postDelayed(this, 1000);
+                  }
+              };
+
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  if (getBridge() != null && getBridge().getWebView() != null) {
+                      getBridge().getWebView().addJavascriptInterface(new Object() {
+                          @JavascriptInterface
+                          public void keepAlive(boolean on) { wantKeepAlive = on; }
+                      }, "DTBNative");
+                  }
+              }
+
+              private void startTicker() {
+                  inBackground = true;
+                  handler.removeCallbacks(ticker);
+                  handler.postDelayed(ticker, 300);
+              }
+
+              @Override
+              public void onPause() { super.onPause(); startTicker(); }
+
+              @Override
+              public void onStop() { super.onStop(); startTicker(); }
+
+              @Override
+              public void onResume() {
+                  super.onResume();
+                  inBackground = false;
+                  handler.removeCallbacks(ticker);
+              }
+          }
+          JAVA
 
       - name: Build APK debug
         working-directory: android
