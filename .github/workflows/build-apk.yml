@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PWA_URL: "https://<username>.github.io/<nama-repo>/"
+      PWA_URL: "https://github.com/DANZZ-dev/toolbox-apk"
       PACKAGE_ID: "com.example.devtoolbox"
     steps:
       - name: Checkout
