@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>toolbox — dev utilities</title>
-<meta name="theme-color" content="#0B0D10">
+<meta name="theme-color" content="#090B12">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,28 +14,28 @@
 
   <!-- Activity bar -->
   <nav class="railbar" aria-label="Navigasi tool">
-    <div class="rail-brand">›_</div>
-    <button class="rail-item is-active" data-target="qr"     title="QR Generator">QR</button>
-    <button class="rail-item"           data-target="text"   title="Text &amp; Encode">TX</button>
-    <button class="rail-item"           data-target="color"  title="Color">CL</button>
-    <button class="rail-item"           data-target="pass"   title="Password">PW</button>
-    <button class="rail-item"           data-target="json"   title="JSON Formatter">JS</button>
-    <button class="rail-item"           data-target="music"  title="Music Player">MU</button>
-    <button class="rail-item"           data-target="clock"  title="Clock &amp; Timer">CK</button>
+    <div class="rail-brand" aria-hidden="true">›<span class="cursor">_</span></div>
+    <button class="rail-item is-active" data-target="qr" data-label="QR" aria-label="QR Generator"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3m4-3v.01M14 21h3m4-4v4h-2"/></svg><span class="rail-label">QR</span></button>
+    <button class="rail-item" data-target="text" data-label="Teks" aria-label="Text &amp; Encode"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg><span class="rail-label">Teks</span></button>
+    <button class="rail-item" data-target="color" data-label="Warna" aria-label="Color"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/></svg><span class="rail-label">Warna</span></button>
+    <button class="rail-item" data-target="pass" data-label="Sandi" aria-label="Password"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span class="rail-label">Sandi</span></button>
+    <button class="rail-item" data-target="json" data-label="JSON" aria-label="JSON Formatter"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg><span class="rail-label">JSON</span></button>
+    <button class="rail-item" data-target="music" data-label="Musik" aria-label="Music Player"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="rail-label">Musik</span></button>
+    <button class="rail-item" data-target="clock" data-label="Waktu" aria-label="Clock &amp; Timer"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="rail-label">Waktu</span></button>
   </nav>
 
   <!-- Main content -->
+  <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
   <main class="stage">
 
     <header class="stage-topbar">
       <span class="path">~/toolbox/<span id="pathTail">qr-generator</span></span>
-      <span class="dot-status">● ready</span>
+      <span class="dot-status"><i class="pulse-dot"></i>ready</span>
     </header>
 
     <!-- QR GENERATOR -->
     <section class="panel is-active" id="panel-qr" data-panel="qr">
-      <h1>QR Generator</h1>
-      <p class="lead">Buat kode QR dari berbagai jenis data.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3m4-3v.01M14 21h3m4-4v4h-2"/></svg></span><div class="panel-titles"><h1>QR Generator</h1><p class="lead">Buat kode QR dari berbagai jenis data.</p></div></div>
 
       <div class="tabs" id="qrTabs">
         <button class="tab is-active" data-mode="text">Teks / URL</button>
@@ -118,8 +118,7 @@
 
     <!-- TEXT / ENCODE TOOLS -->
     <section class="panel" id="panel-text" data-panel="text">
-      <h1>Text &amp; Encode</h1>
-      <p class="lead">Base64, konversi huruf, dan lorem ipsum.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg></span><div class="panel-titles"><h1>Text &amp; Encode</h1><p class="lead">Base64, konversi huruf, dan lorem ipsum.</p></div></div>
 
       <div class="grid-2">
         <div class="card">
@@ -167,8 +166,7 @@
 
     <!-- COLOR -->
     <section class="panel" id="panel-color" data-panel="color">
-      <h1>Color Tool</h1>
-      <p class="lead">Pilih warna, lihat semua format sekaligus.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/></svg></span><div class="panel-titles"><h1>Color Tool</h1><p class="lead">Pilih warna, lihat semua format sekaligus.</p></div></div>
 
       <div class="color-body">
         <input type="color" id="colorPicker" value="#6C8CFF">
@@ -183,8 +181,7 @@
 
     <!-- PASSWORD -->
     <section class="panel" id="panel-pass" data-panel="pass">
-      <h1>Password Generator</h1>
-      <p class="lead">Buat kata sandi acak yang kuat.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div class="panel-titles"><h1>Password Generator</h1><p class="lead">Buat kata sandi acak yang kuat.</p></div></div>
 
       <div class="card pass-card">
         <label>Panjang: <span id="passLenVal">16</span>
@@ -204,8 +201,7 @@
 
     <!-- JSON -->
     <section class="panel" id="panel-json" data-panel="json">
-      <h1>JSON Formatter</h1>
-      <p class="lead">Rapikan dan validasi JSON.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg></span><div class="panel-titles"><h1>JSON Formatter</h1><p class="lead">Rapikan dan validasi JSON.</p></div></div>
 
       <div class="grid-2">
         <textarea id="jsonInput" rows="16" placeholder='{"contoh": true}'></textarea>
@@ -220,8 +216,7 @@
 
     <!-- MUSIC PLAYER (YouTube) -->
     <section class="panel" id="panel-music" data-panel="music">
-      <h1>Music Player</h1>
-      <p class="lead">Cari judul lagu atau tempel link YouTube.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="panel-titles"><h1>Music Player</h1><p class="lead">Cari judul lagu atau tempel link YouTube.</p></div></div>
 
       <div class="player">
         <div class="yt-search">
@@ -233,16 +228,17 @@
         <div class="yt-frame"><div id="ytPlayer"></div></div>
 
         <div class="now-playing">
-          <div class="track-title" id="trackTitle">Belum ada lagu dipilih</div>
+          <div class="track-row"><div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="track-title" id="trackTitle">Belum ada lagu dipilih</div></div>
           <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
           <div class="time-row">
             <span id="curTime">0:00</span>
             <span id="durTime">0:00</span>
           </div>
           <div class="controls">
-            <button id="prevBtn" title="Sebelumnya">⏮</button>
-            <button id="playBtn" title="Play/Pause">▶</button>
-            <button id="nextBtn" title="Berikutnya">⏭</button>
+            <button id="prevBtn" title="Sebelumnya" aria-label="Sebelumnya"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+            <button id="playBtn" title="Play/Pause" aria-label="Play/Pause">▶</button>
+            <button id="nextBtn" title="Berikutnya" aria-label="Berikutnya"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+            <svg class="vol-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6"/></svg>
             <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" title="Volume">
           </div>
         </div>
@@ -263,11 +259,10 @@
 
     <!-- CLOCK -->
     <section class="panel" id="panel-clock" data-panel="clock">
-      <h1>Clock &amp; Timer</h1>
-      <p class="lead">Jam digital, stopwatch, dan countdown.</p>
+      <div class="panel-head"><span class="panel-ico"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="panel-titles"><h1>Clock &amp; Timer</h1><p class="lead">Jam digital, stopwatch, dan countdown.</p></div></div>
 
       <div class="grid-2">
-        <div class="card clock-card">
+        <div class="card clock-card"><div class="clock-ring" aria-hidden="true"></div>
           <div class="big-clock" id="bigClock">00:00:00</div>
           <div class="big-date" id="bigDate">—</div>
         </div>
@@ -300,5 +295,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/app.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>
